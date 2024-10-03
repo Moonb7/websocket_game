@@ -1,5 +1,6 @@
-import { clearStage, getStage, setStage } from '../models/stage.model.js';
+import { createStage, getStage, setStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
+import { createItem } from '../models/item.model.js';
 
 export const gameStart = (uuid, payload) => {
   // 스테이지에 따라서 더 높은 점수 획득
@@ -9,8 +10,13 @@ export const gameStart = (uuid, payload) => {
   // 현재 프로젝트에선 접속하자 마자 스테이지의 점보 점수에 대한 정보를 넣어주기로 했다.
   const { stages } = getGameAssets();
 
-  clearStage(uuid);
-  setStage(uuid, stages.data[0].id, payload.timestamp); // 현재 프로젝트는 편의를 위해 클라이언트에서 현재 시작한 시간을 서버에 저장하는 형식입니다. 하지만 원래는 클라이언트에서 받은 데이터는 서버에 저장을 하지 않습니다. 클라이언트에서 변질된 데이터가 있다는 위험때문에 저장을 거의 저장을 하지않습니다. 서버 기준으로 검증된 데이터는 저장하지 않습니다.
+  createStage(uuid);
+  createItem(uuid);
+
+  // 현재 프로젝트는 편의를 위해 클라이언트에서 현재 시작한 시간을 서버에 저장하는 형식입니다.
+  // 하지만 원래는 클라이언트에서 받은 데이터는 서버에 저장을 하지 않습니다.
+  // 클라이언트에서 변질된 데이터가 있다는 위험때문에 저장을 거의 저장을 하지않습니다. 서버 기준으로 검증된 데이터는 저장하지 않습니다.
+  setStage(uuid, stages.data[0].id, payload.timestamp);
   console.log('Stage: ', getStage(uuid));
 
   return { status: 'success' };

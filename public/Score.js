@@ -1,6 +1,7 @@
 import { sendEvent } from './Socket.js';
-import stageAssetData from './assets/stage.json' with { type: 'json' };
-console.log(stageAssetData);
+import { getGameAssets } from './init/assets.js';
+
+const { stageAssetData } = getGameAssets();
 
 class Score {
   score = 0;
@@ -8,7 +9,6 @@ class Score {
   HIGH_SCORE_KEY = 'highScore'; // 로컬로 최종 점수 저장할 키
   stageChange = true;
   currentStageId = stageAssetData.data[0].id;
-  targetStageId = this.currentStageId + 1; // 스테이지 데이터 테이블 구조가 1000, 1001,.... 이런식으로 구조가 되어있어 +1로 할당 음 나중에 수정하기
   stage = 1;
 
   constructor(ctx, scaleRatio) {
@@ -19,23 +19,24 @@ class Score {
 
   update(deltaTime) {
     this.score += deltaTime * 0.001 * stageAssetData.data[this.stage - 1].scorePerSecond;
+    this.scoreCheckStageChange();
+  }
+
+  scoreCheckStageChange() {
     if (
       stageAssetData.data[this.stage] &&
       Math.floor(this.score) >= stageAssetData.data[this.stage].score &&
       this.stageChange
     ) {
       this.stageChange = false;
-      sendEvent(11, { currentStage: this.currentStageId, targetStage: this.targetStageId }); // 스테이지 이동
+      sendEvent(11, { currentStage: this.currentStageId, targetStage: this.currentStageId + 1 }); // 스테이지 이동
       // 여기서 클라이언트 현재 스테이지도 바뀌고 타켓스테이지도 변경
+      // 근데 서버에서 바뀐 스테이지 정보를 넘겨주어서 저장하는건가?
       this.currentStageId += 1;
-      this.targetStageId += 1;
       this.stage++;
     }
 
-    if (
-      Math.floor(this.score) >= stageAssetData.data[this.stage - 1].score + 1 &&
-      !this.stageChange
-    ) {
+    if (Math.floor(this.score) >= stageAssetData.data[this.stage - 1].score + 1 && !this.stageChange) {
       // stageChange 다시 초기화
       this.stageChange = true;
     }
@@ -50,7 +51,6 @@ class Score {
     this.stageChange = true;
     this.stage = 1;
     this.currentStageId = stageAssetData.data[0].id; // 시작시 기본이 1000 이니깐 class로 객체를 만들면 1000으로 시작
-    this.targetStageId = this.currentStageId + 1;
   }
 
   setHighScore() {
@@ -62,6 +62,10 @@ class Score {
 
   getScore() {
     return this.score;
+  }
+
+  getStage() {
+    return this.currentStageId;
   }
 
   draw() {

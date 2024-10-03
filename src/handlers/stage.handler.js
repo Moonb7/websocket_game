@@ -32,6 +32,7 @@ export const moveStageHandler = (userId, payload) => {
   }
 
   // 다음 스테이지 id 추가
-  setStage(userId, payload.targetStage, serverTime); // 다음스테이지의 타임을 정해주었고
+  setStage(userId, payload.targetStage, serverTime); // 다음스테이지의 시작 타임 저장
+
   return { status: 'success! next Stage' };
 };

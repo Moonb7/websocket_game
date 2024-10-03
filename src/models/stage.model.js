@@ -16,6 +16,7 @@ export const setStage = (uuid, id, timestamp) => {
   return stages[uuid].push({ id, timestamp });
 };
 
-export const clearStage = (uuid) => {
-  stages[uuid] = [];
-};
+// // 일단 보류 어디다 써야할지
+// export const clearStage = (uuid) => {
+//   stages[uuid] = [];
+// };

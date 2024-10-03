@@ -5,6 +5,10 @@ import Score from './Score.js';
 import ItemController from './ItemController.js';
 import './Socket.js';
 import { sendEvent } from './Socket.js';
+import { getGameAssets } from './init/assets.js';
+
+// 게임 데이터들 가져오기
+const { itemAssetData, itemUnlockAssetData, hurdlesAssetData } = getGameAssets();
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -15,6 +19,9 @@ const GAME_SPEED_INCREMENT = 0.00001;
 // 게임 크기
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 200;
+
+// 이미지 비율 맞추기위한 변수
+const imageRatio = 1.5;
 
 // 플레이어
 // 800 * 200 사이즈의 캔버스에서는 이미지의 기본크기가 크기때문에 1.5로 나눈 값을 사용. (비율 유지)
@@ -28,20 +35,11 @@ const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 24;
 const GROUND_SPEED = 0.5;
 
-// 선인장
-const CACTI_CONFIG = [
-  { width: 48 / 1.5, height: 100 / 1.5, image: 'images/cactus_1.png' },
-  { width: 98 / 1.5, height: 100 / 1.5, image: 'images/cactus_2.png' },
-  { width: 68 / 1.5, height: 70 / 1.5, image: 'images/cactus_3.png' },
-];
-
-// 아이템
-const ITEM_CONFIG = [
-  { width: 50 / 1.5, height: 50 / 1.5, id: 1, image: 'images/items/pokeball_red.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 2, image: 'images/items/pokeball_yellow.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 3, image: 'images/items/pokeball_purple.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 4, image: 'images/items/pokeball_cyan.png' },
-];
+// 선인장도 게임 데이터?
+const CACTI_CONFIG = hurdlesAssetData.data;
+// 아이템 게임 데이터
+const ITEM_CONFIG = itemAssetData.data;
+const ITEM_UNLOCK_CONFIG = itemUnlockAssetData.data;
 
 // 게임 요소들
 let player = null;
@@ -69,14 +67,7 @@ function createSprites() {
   const groundWidthInGame = GROUND_WIDTH * scaleRatio;
   const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
 
-  player = new Player(
-    ctx,
-    playerWidthInGame,
-    playerHeightInGame,
-    minJumpHeightInGame,
-    maxJumpHeightInGame,
-    scaleRatio,
-  );
+  player = new Player(ctx, playerWidthInGame, playerHeightInGame, minJumpHeightInGame, maxJumpHeightInGame, scaleRatio);
 
   ground = new Ground(ctx, groundWidthInGame, groundHeightInGame, GROUND_SPEED, scaleRatio);
 
@@ -85,8 +76,8 @@ function createSprites() {
     image.src = cactus.image;
     return {
       image,
-      width: cactus.width * scaleRatio,
-      height: cactus.height * scaleRatio,
+      width: (cactus.width * scaleRatio) / imageRatio,
+      height: (cactus.height * scaleRatio) / imageRatio,
     };
   });
 
@@ -98,12 +89,12 @@ function createSprites() {
     return {
       image,
       id: item.id,
-      width: item.width * scaleRatio,
-      height: item.height * scaleRatio,
+      width: (item.width * scaleRatio) / imageRatio,
+      height: (item.height * scaleRatio) / imageRatio,
     };
   });
 
-  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED);
+  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED, ITEM_UNLOCK_CONFIG); // 언락되는 아이템조건도 추가
 
   score = new Score(ctx, scaleRatio);
 }
@@ -204,7 +195,7 @@ function gameLoop(currentTime) {
     ground.update(gameSpeed, deltaTime);
     // 선인장
     cactiController.update(gameSpeed, deltaTime);
-    itemController.update(gameSpeed, deltaTime);
+    itemController.update(gameSpeed, deltaTime, score.getStage()); // 계속 stage정보를 주는게 좋은지는 모르겠네 일단 해보고 수정하자
     // 달리기
     player.update(gameSpeed, deltaTime);
     updateGameSpeed(deltaTime);

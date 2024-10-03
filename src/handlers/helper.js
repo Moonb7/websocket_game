@@ -1,6 +1,4 @@
 import { CLIENT_VERSION } from '../constants.js';
-import { getGameAssets } from '../init/assets.js';
-import { createStage, getStage, setStage } from '../models/stage.model.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 
@@ -16,15 +14,7 @@ export const handleConnection = (socket, uuid) => {
   console.log(`New user connected!: ${uuid} with socket ID ${socket.id}`);
   console.log(`Current users: `, getUsers());
 
-  createStage(uuid);
-
-  // 게임 시작하는 이벤트 핸들러 함수를 만들어 거기에 작성하였다
-  // const { stages } = getGameAssets();
-  // // stages 배열에서 0번째 = 첫번째 스테이지
-  // setStage(uuid, stages.data[0].id);
-  // console.log('Stage:', getStage(uuid));
-
-  // 본인에게 보내는 메세지? connection이라는 이벤트를 통해서 연결된 유저에게 uuid의 데이터를 보내주는 것
+  // 연결된 소켓에게 connection이라는 이벤트를 통해서 연결된 유저에게 uuid의 데이터를 보내주는 것
   socket.emit('connection', { uuid });
 };
 

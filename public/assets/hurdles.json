@@ -1,0 +1,9 @@
+{
+  "name": "hurdles",
+  "version": "1.0.0",
+  "data": [
+    { "width": 48, "height": 100, "image": "images/cactus_1.png" },
+    { "width": 98, "height": 100, "image": "images/cactus_2.png" },
+    { "width": 68, "height": 70, "image": "images/cactus_3.png" }
+  ]
+}
