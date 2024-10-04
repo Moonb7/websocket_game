@@ -1,7 +1,7 @@
 import { sendEvent } from './Socket.js';
 import { getGameAssets } from './init/assets.js';
 
-const { stageAssetData } = getGameAssets();
+const { stageAssetData, itemAssetData } = getGameAssets();
 
 class Score {
   score = 0;
@@ -43,7 +43,10 @@ class Score {
   }
 
   getItem(itemId) {
-    this.score += 0; // 음 0이 아니라 아이템의 score를 넣어 주면 되네
+    const item = itemAssetData.data.find((item) => item.id === itemId); // 해당 아이템 점수 찾기
+    // 여기서 아이템 획득 서버로 부터 로직 처리하면 되것다
+    sendEvent(12, { item: itemId, itemScore: item.score, currentStage: this.currentStageId });
+    this.score += item.score; // 해당 아이템 점수 획득
   }
 
   reset() {

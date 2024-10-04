@@ -211,6 +211,7 @@ function gameLoop(currentTime) {
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
     score.getItem(collideWithItem.itemId);
+    // console.log(collideWithItem.itemId);
   }
 
   // draw

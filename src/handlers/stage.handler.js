@@ -1,11 +1,14 @@
 import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage } from '../models/stage.model.js';
 import { scoreValidation } from '../utils/score.validation.js';
+import { getItems } from '../models/item.model.js';
 
 export const moveStageHandler = (userId, payload) => {
+  // 유저의 현재 아이템 정보 불러오기
+  const currentItems = getItems(userId);
   // currentStage, targetStage
   // 유저의 현재 스테이지 정보 불러오기
-  let currentStages = getStage(userId);
+  const currentStages = getStage(userId);
   if (!currentStages.length) {
     return { status: 'fail', message: 'No stages found for user' };
   }
@@ -27,7 +30,7 @@ export const moveStageHandler = (userId, payload) => {
 
   // 점수 검증
   const serverTime = Date.now(); // 현재 타임스탬프
-  if (!scoreValidation(serverTime, currentStages, payload.targetStage)) {
+  if (!scoreValidation(serverTime, currentStages, payload.targetStage, currentItems)) {
     return { status: 'fail', message: 'Invalid elapsed time' };
   }
 

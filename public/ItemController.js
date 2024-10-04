@@ -30,9 +30,13 @@ class ItemController {
   // 현재 스테이지에 맞게 생성해야된다. 현재 스테이지 정보 필요
   createItem(currentStage) {
     const unlockInfo = this.itemUnlock.find((unlockInfo) => unlockInfo.stage_id === currentStage);
-    console.log('---------unlockInfo--------', unlockInfo);
-    const index = this.getRandomNumber(0, this.itemImages.length - 1); // 랜덤으로 생성할 아이템 id를 정하기 음 여기서 제한을 걸고해야되겠다
+    const index = this.getRandomNumber(
+      unlockInfo.item_id[0] - 1,
+      unlockInfo.item_id[unlockInfo.item_id.length - 1] - 1,
+    ); // 랜덤으로 생성할 아이템 id를 정하기 음 여기서 제한을 걸고해야되겠다
     const itemInfo = this.itemImages[index];
+    // console.log(currentStage);
+    // console.log(itemInfo);
     const x = this.canvas.width * 1.5;
     const y = this.getRandomNumber(10, this.canvas.height - itemInfo.height);
 
