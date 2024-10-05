@@ -8,8 +8,12 @@ const socket = io('http://localhost:3000', {
 });
 
 let userId = null;
+let highScore = 0;
 socket.on('response', (data) => {
-  console.log(data);
+  console.log('response: ', data);
+  if (data.highScore) {
+    highScore = data.highScore;
+  }
 });
 
 socket.on('connection', (data) => {
@@ -27,4 +31,5 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
+export { highScore };
 export { sendEvent };

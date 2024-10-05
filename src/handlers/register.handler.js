@@ -13,7 +13,7 @@ const registerHandler = (io) => {
     addUser({ uuid: userUUID, socket: socket.id }); // soket.id는 새로 연결(접속?)을 할떄마다 새롭게 등록 그리고 uuid도 임의로 만든 uuid를 넣어준다
 
     // 유저가 접속해서 등록되었으면 현재 프로젝트는 스테이지정보를 넣어 주면 되지만 실제로는 유저가 가지고 있었던 아이템이나 스킬 기타등등을 넣어 주어야 된다.
-    handleConnection(socket, userUUID);
+    handleConnection(io, socket, userUUID);
 
     // 발생하는 모든 이벤트 처리
     socket.on('event', (data) => {

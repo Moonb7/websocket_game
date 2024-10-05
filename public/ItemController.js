@@ -33,7 +33,7 @@ class ItemController {
     const index = this.getRandomNumber(
       unlockInfo.item_id[0] - 1,
       unlockInfo.item_id[unlockInfo.item_id.length - 1] - 1,
-    ); // 랜덤으로 생성할 아이템 id를 정하기 음 여기서 제한을 걸고해야되겠다
+    );
     const itemInfo = this.itemImages[index];
     // console.log(currentStage);
     // console.log(itemInfo);

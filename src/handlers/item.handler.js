@@ -6,13 +6,13 @@ export const addItemHandler = (userId, payload) => {
   // 현재 클라이언트에서 보내준 payload 값 : item, itemScore, currentStage (획득한 아이템Id와 아이템 점수 현재 스테이지Id를 받습니다.)
 
   const userItems = getItems(userId);
+  userItems.sort((a, b) => a.id - b.id);
   if (!userItems) {
     return { status: 'fail', message: 'No items found for user' };
   }
 
   // 해당 스테이지에 획득할수 있는 아이템인지 검증하기 위해 현재 스테이지를 찾는다
   const currentStages = getStage(userId);
-  currentStages.sort((a, b) => a.id - b.id);
   const currentStage = currentStages[currentStages.length - 1];
 
   // 클라이언트 vs 서버 비교

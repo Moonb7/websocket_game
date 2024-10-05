@@ -1,6 +1,8 @@
 import { createStage, getStage, setStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
-import { createItem } from '../models/item.model.js';
+import { createItem, getItems } from '../models/item.model.js';
+import { getTotalScore } from '../utils/score.validation.js';
+import { setScore, getHighestScore } from '../models/highScore.model.js';
 
 export const gameStart = (uuid, payload) => {
   // 스테이지에 따라서 더 높은 점수 획득
@@ -23,7 +25,7 @@ export const gameStart = (uuid, payload) => {
 };
 
 export const gameEnd = (uuid, payload) => {
-  // 클라이언트는 게임 종료시 서버에게 게임 졸료시점 타임스탬프와 총 점수를 줄 것 입니다.
+  // 클라이언트는 게임 종료시 서버에게 종료시점 timeStpamp와 총 점수 를 줄 것 입니다. 추가(별칭도 넘겨 받기)
   const { timestamp: gameEndTime, score } = payload; // timestamp:gameEndTime 이런 형태로 쓰면 객체 구조 분해 할당으로 받고 나서 그 변수의 이름을 바꿀수 있습니다.
   const stages = getStage(uuid);
 
@@ -31,30 +33,18 @@ export const gameEnd = (uuid, payload) => {
     return { status: 'fail', message: 'No stages found for user' };
   }
 
-  // 각 스테이지의 지속 시간을 계산하여 총 점수 계산
-  let totalScore = 0;
-  stages.forEach((stage, index) => {
-    let stageEndTime;
-    if (index === stages.length - 1) {
-      stageEndTime = gameEndTime;
-    } else {
-      stageEndTime = stages[index + 1].timestamp;
-    }
-
-    const stageDuration = (stageEndTime - stage.timestamp) / 1000;
-    console.log(stageEndTime - stage.timestamp);
-    totalScore += stageDuration; // 초당 1점
-  });
+  const totalScore = getTotalScore(gameEndTime, stages, getItems(uuid));
 
   // 점수와 타임 스탬프 검증
   // 오차범위 5
-  // 클라이언트에게 받은 score와 서버에서 계산한 totalScore와 비교했을때 오차범위가 5보다 크면 이건 서버 또는 클라이언트에서 이상이 생겨 점수가 너무차이가나면 오류로 처리하는 걸로 했습니다.
   if (Math.abs(score - totalScore) > 5) {
     return { status: 'fail', message: 'Score verification failed' };
   }
-  // DB 저장한다고 가정을 하면
-  // 저장
-  // setResult(userId, score, timestamp) 이런식으로 db에 저장을 할 수 도 있을 것 같다
+
+  // 최고기록 저장
+  if (score > getHighestScore()) {
+    setScore(uuid, score);
+  }
 
   return { status: 'success', message: 'Game ended', score }; // totalScore가 아닌 클라이언트에서 받은 score를 저장해 주면서 유저가 납득할만한 점수를 저장하였다
 };

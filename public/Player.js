@@ -8,8 +8,8 @@ class Player {
   jumpInProgress = false;
   falling = false;
 
-  JUMP_SPEED = 0.6;
-  GRAVITY = 0.4;
+  JUMP_SPEED = 0.8;
+  GRAVITY = 0.6;
 
   // 생성자
   constructor(ctx, width, height, minJumpHeight, maxJumpHeight, scaleRatio) {

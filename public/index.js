@@ -18,7 +18,7 @@ const GAME_SPEED_INCREMENT = 0.00001;
 
 // 게임 크기
 const GAME_WIDTH = 800;
-const GAME_HEIGHT = 200;
+const GAME_HEIGHT = 400;
 
 // 이미지 비율 맞추기위한 변수
 const imageRatio = 1.5;
@@ -135,6 +135,11 @@ function showGameOver() {
   ctx.fillText('GAME OVER', x, y);
 }
 
+function gameOverEvent() {
+  // if (갱신한 최고기록보다 높은지 높으면 그거 별칭 받아서) sendEvent보내기
+  sendEvent(3, { gameEndTime: Date.now(), score: score.getScore() });
+}
+
 function showStartGameText() {
   const fontSize = 40 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
@@ -207,6 +212,7 @@ function gameLoop(currentTime) {
     gameover = true;
     score.setHighScore();
     setupGameReset();
+    gameOverEvent();
   }
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
