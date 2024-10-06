@@ -2,13 +2,14 @@ import { CLIENT_VERSION } from '../constants.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 import { getHighestScore, getScore } from '../models/highScore.model.js';
+import { redisClient } from '../init/redis.js';
 
 // 최고점수를 비교할 전역 변수
 let highScore = getHighestScore();
 
 export const handleDisconnect = (socket, uuid) => {
   console.log(socket.id);
-  removeUser(socket.id);
+  removeUser(uuid);
 
   console.log(`User disconnected: ${socket.id}`);
   console.log('Current users: ', getUsers());

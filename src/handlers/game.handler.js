@@ -26,7 +26,7 @@ export const gameStart = (uuid, payload) => {
 
 export const gameEnd = (uuid, payload) => {
   // 클라이언트는 게임 종료시 서버에게 종료시점 timeStpamp와 총 점수 를 줄 것 입니다. 추가(별칭도 넘겨 받기)
-  const { timestamp: gameEndTime, score } = payload; // timestamp:gameEndTime 이런 형태로 쓰면 객체 구조 분해 할당으로 받고 나서 그 변수의 이름을 바꿀수 있습니다.
+  const { gameEndTime, score } = payload; // timestamp:gameEndTime 이런 형태로 쓰면 객체 구조 분해 할당으로 받고 나서 그 변수의 이름을 바꿀수 있습니다.
   const stages = getStage(uuid);
 
   if (!stages.length) {
@@ -44,12 +44,12 @@ export const gameEnd = (uuid, payload) => {
   // 최고기록 저장
   if (score > getHighestScore()) {
     setScore(uuid, score);
-    return { status: 'success', message: '유저가 최고신기록을 달성하였습니다.', score };
+    return { status: 'success', message: 'The user achieved a new record.', score };
   }
 
   if (score > getScore(uuid) || !getScore(uuid)) {
     setScore(uuid, score);
-    return { status: 'success', message: '유저가 자신의 최고기록을 세웠습니다.', score };
+    return { status: 'success', message: 'The user broke his best record.', score };
   }
 
   return { status: 'success', message: 'Game ended', score }; // totalScore가 아닌 클라이언트에서 받은 score를 저장해 주면서 유저가 납득할만한 점수를 저장하였다

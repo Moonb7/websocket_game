@@ -3,6 +3,7 @@ import { createServer } from 'http'; // 기본적으로 node.js 모듈에 포함
 import dotenv from 'dotenv';
 import initSocket from './init/socket.js';
 import { loadGameAssets, getGameAssets } from './init/assets.js';
+import { redisClient } from './init/redis.js';
 
 dotenv.config();
 
@@ -33,3 +34,6 @@ server.listen(PORT, async () => {
     console.error('Failed to load game assets: ', err);
   }
 });
+
+// 서버 최초 실행시 레디스 데이터 전부삭제
+redisClient.flushAll();

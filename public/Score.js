@@ -29,7 +29,7 @@ class Score {
       this.stageChange
     ) {
       this.stageChange = false;
-      sendEvent(11, { currentStage: this.currentStageId, targetStage: this.currentStageId + 1 }); // 스테이지 이동
+      sendEvent(11, { currentStage: this.currentStageId, targetStage: this.currentStageId + 1, score: this.score }); // 스테이지 이동
       // 여기서 클라이언트 현재 스테이지도 바뀌고 타켓스테이지도 변경
       // 근데 서버에서 바뀐 스테이지 정보를 넘겨주어서 저장하는건가?
       this.currentStageId += 1;

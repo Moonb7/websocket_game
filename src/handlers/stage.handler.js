@@ -1,11 +1,8 @@
 import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage } from '../models/stage.model.js';
 import { scoreValidation } from '../utils/score.validation.js';
-import { getItems } from '../models/item.model.js';
 
 export const moveStageHandler = (userId, payload) => {
-  // 유저의 현재 아이템 정보 불러오기
-  const currentItems = getItems(userId);
   // currentStage, targetStage
   // 유저의 현재 스테이지 정보 불러오기
   const currentStages = getStage(userId);
@@ -30,7 +27,7 @@ export const moveStageHandler = (userId, payload) => {
 
   // 점수 검증
   const serverTime = Date.now(); // 현재 타임스탬프
-  if (!scoreValidation(serverTime, currentStages, payload.targetStage, currentItems)) {
+  if (!scoreValidation(userId, serverTime, payload)) {
     return { status: 'fail', message: 'Invalid elapsed time' };
   }
 
