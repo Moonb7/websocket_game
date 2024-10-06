@@ -6,6 +6,10 @@
 // 최고기록 갱신할떄마다 점수를 저장할 객체
 const highScores = {};
 
+export const getScore = (uuid) => {
+  return Math.floor(highScores[uuid]);
+};
+
 // 현재 유저의 최고 점수갱신 및 생성
 export const setScore = (uuid, highScore) => {
   if (highScores[uuid]) {

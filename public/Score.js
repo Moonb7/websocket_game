@@ -1,4 +1,4 @@
-import { sendEvent, highScore } from './Socket.js';
+import { sendEvent, highScore, userScore } from './Socket.js';
 import { getGameAssets } from './init/assets.js';
 
 const { stageAssetData, itemAssetData } = getGameAssets();
@@ -60,7 +60,6 @@ class Score {
     // const highScore = highScore;
     if (this.score > highScore) {
       // localStorage.setItem(this.HIGH_SCORE_KEY, Math.floor(this.score)); // 최종 점수 로컬 저장소에 저장
-      // 여기서 뭔가를 해줘야하는데
     }
   }
 
@@ -75,6 +74,7 @@ class Score {
   draw() {
     // const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY)); // 로컬 저장소에서 최고 점수
     const highScoreDraw = highScore;
+    const userHighScoreDraw = userScore;
     const y = 20 * this.scaleRatio;
 
     const fontSize = 20 * this.scaleRatio;
@@ -83,15 +83,17 @@ class Score {
 
     const scoreX = this.canvas.width - 75 * this.scaleRatio;
     const highScoreX = scoreX - 125 * this.scaleRatio;
-    const stageX = highScoreX - 125 * this.scaleRatio;
+    const userScoreX = highScoreX - 185 * this.scaleRatio;
+    const stageX = userScoreX - 125 * this.scaleRatio;
 
     const scorePadded = Math.floor(this.score).toString().padStart(6, 0);
     const highScorePadded = highScoreDraw.toString().padStart(6, 0);
-
+    const userScorePadded = userHighScoreDraw.toString().padStart(6, 0);
     const currentStagePadded = this.stage.toString();
 
     this.ctx.fillText(scorePadded, scoreX, y);
     this.ctx.fillText(`HI ${highScorePadded}`, highScoreX, y);
+    this.ctx.fillText(`yourSocre ${userScorePadded}`, userScoreX, y);
     this.ctx.fillText(`STAGE ${currentStagePadded}`, stageX, y);
   }
 }

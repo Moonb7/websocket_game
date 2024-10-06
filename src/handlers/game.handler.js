@@ -2,7 +2,7 @@ import { createStage, getStage, setStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
 import { createItem, getItems } from '../models/item.model.js';
 import { getTotalScore } from '../utils/score.validation.js';
-import { setScore, getHighestScore } from '../models/highScore.model.js';
+import { setScore, getHighestScore, getScore } from '../models/highScore.model.js';
 
 export const gameStart = (uuid, payload) => {
   // 스테이지에 따라서 더 높은 점수 획득
@@ -44,6 +44,12 @@ export const gameEnd = (uuid, payload) => {
   // 최고기록 저장
   if (score > getHighestScore()) {
     setScore(uuid, score);
+    return { status: 'success', message: '유저가 최고신기록을 달성하였습니다.', score };
+  }
+
+  if (score > getScore(uuid) || !getScore(uuid)) {
+    setScore(uuid, score);
+    return { status: 'success', message: '유저가 자신의 최고기록을 세웠습니다.', score };
   }
 
   return { status: 'success', message: 'Game ended', score }; // totalScore가 아닌 클라이언트에서 받은 score를 저장해 주면서 유저가 납득할만한 점수를 저장하였다

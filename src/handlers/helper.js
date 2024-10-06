@@ -1,7 +1,7 @@
 import { CLIENT_VERSION } from '../constants.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
-import { getHighestScore } from '../models/highScore.model.js';
+import { getHighestScore, getScore } from '../models/highScore.model.js';
 
 // 최고점수를 비교할 전역 변수
 let highScore = getHighestScore();
@@ -19,10 +19,10 @@ export const handleConnection = (io, socket, uuid) => {
   console.log(`Current users: `, getUsers());
 
   // 연결된 소켓에게 connection이라는 이벤트를 통해서 연결된 유저에게 uuid의 데이터를 보내주는 것
-  socket.emit('connection', { uuid });
+  socket.emit('connection', { uuid, userScore: getScore(uuid) });
 
   // 연결할때 기록한 최고점수 클라이언트에게 주기
-  io.emit('response', { highScore: getHighestScore() });
+  io.emit('connection', { highScore: getHighestScore() });
 };
 
 // 클라에서 요청받은 이벤트를 실행하기 위한 함수 data에는 여러, 유저id, payload등이 있을 것이다.
@@ -46,6 +46,11 @@ export const handlerEvent = (io, socket, data) => {
   if (data.handlerId === 3 && highScore < getHighestScore()) {
     highScore = getHighestScore();
     io.emit('response', { highScore: getHighestScore() });
+  }
+
+  if (data.handlerId === 3) {
+    socket.emit('response', { userScore: getScore(data.userId) });
+    console.log(data.userId);
   }
 
   // socket.emit 해당 유저 한명에게 메세지를 보낸다.
