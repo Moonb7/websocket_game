@@ -33,10 +33,14 @@ export const scoreValidation = (serverTime, userStages, targetStageId, userItems
   // console.log('-------totalScore---------', totalScore);
   const targetStage = stages.data.find((stage) => stage.id === targetStageId);
 
-  const itemInfo = items.data.find((item) => item.id === userItems[userItems.length - 1].itemId); // 가장 최고점의 아이템 점수 가져와서 오차범위 더해주기
+  let itemScore = 0;
+
+  if (userItems.length > 0) {
+    itemScore = items.data.find((item) => item.id === userItems[userItems.length - 1].itemId).score; // 유저가 가진 가장 최고점의 아이템 점수 가져와서 오차범위 더해주기
+  }
 
   const errorScopeResult = Math.abs(targetStage.score - totalScore);
-  if (errorScopeResult > errorScope + itemInfo.score) return false;
+  if (errorScopeResult > errorScope + itemScore) return false;
   else return true;
 };
 
