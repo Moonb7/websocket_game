@@ -1,8 +1,13 @@
+import { redisClient } from '../init/redis.js';
+
 // key: uuid, value: array -> stage 정보는 배열
 const stages = {};
+const STAGE_KEY = 'stages';
 
 // 스테이지 초기화
-export const createStage = (uuid) => {
+export const createStage = async (uuid) => {
+  // 배열을
+  // await redisClient.set(`${STAGE_KEY}:${uuid}`);
   stages[uuid] = [];
 };
 
@@ -15,8 +20,3 @@ export const getStage = (uuid) => {
 export const setStage = (uuid, id, timestamp) => {
   return stages[uuid].push({ id, timestamp });
 };
-
-// // 일단 보류 어디다 써야할지
-// export const clearStage = (uuid) => {
-//   stages[uuid] = [];
-// };

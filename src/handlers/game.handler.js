@@ -47,6 +47,7 @@ export const gameEnd = (uuid, payload) => {
     return { status: 'success', message: 'The user achieved a new record.', score };
   }
 
+  // 각 유저 기록갱신시 저장
   if (score > getScore(uuid) || !getScore(uuid)) {
     setScore(uuid, score);
     return { status: 'success', message: 'The user broke his best record.', score };

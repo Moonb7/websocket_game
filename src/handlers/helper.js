@@ -2,22 +2,21 @@ import { CLIENT_VERSION } from '../constants.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 import { getHighestScore, getScore } from '../models/highScore.model.js';
-import { redisClient } from '../init/redis.js';
 
 // 최고점수를 비교할 전역 변수
 let highScore = getHighestScore();
 
-export const handleDisconnect = (socket, uuid) => {
+export const handleDisconnect = async (socket, uuid) => {
   console.log(socket.id);
-  removeUser(uuid);
+  // removeUser(uuid);
 
   console.log(`User disconnected: ${socket.id}`);
-  console.log('Current users: ', getUsers());
+  console.log('Current users: ', await getUsers());
 };
 
-export const handleConnection = (io, socket, uuid) => {
+export const handleConnection = async (io, socket, uuid) => {
   console.log(`New user connected!: ${uuid} with socket ID ${socket.id}`);
-  console.log(`Current users: `, getUsers());
+  console.log(`Current users: `, await getUsers());
 
   // 연결된 소켓에게 connection이라는 이벤트를 통해서 연결된 유저에게 uuid의 데이터를 보내주는 것
   socket.emit('connection', { uuid, userScore: getScore(uuid) });

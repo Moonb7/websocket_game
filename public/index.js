@@ -135,11 +135,6 @@ function showGameOver() {
   ctx.fillText('GAME OVER', x, y);
 }
 
-function gameOverEvent() {
-  // if (갱신한 최고기록보다 높은지 높으면 그거 별칭 받아서) sendEvent보내기
-  sendEvent(3, { gameEndTime: Date.now(), score: score.getScore() });
-}
-
 function showStartGameText() {
   const fontSize = 40 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
@@ -212,12 +207,11 @@ function gameLoop(currentTime) {
     gameover = true;
     score.setHighScore();
     setupGameReset();
-    gameOverEvent();
+    sendEvent(3, { gameEndTime: Date.now(), score: score.getScore() });
   }
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
     score.getItem(collideWithItem.itemId);
-    // console.log(collideWithItem.itemId);
   }
 
   // draw

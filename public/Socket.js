@@ -1,15 +1,17 @@
 import { CLIENT_VERSION } from './Constants.js';
 
+let userId = '';
+let highScore = 0;
+let userScore = 0;
+
 // 실제 연결할 서버의 주소
-const socket = io('http://localhost:3000', {
+const socket = io('http://localhost:3018', {
   query: {
     clientVersion: CLIENT_VERSION,
+    userId,
   },
 });
 
-let userId = null;
-let highScore = 0;
-let userScore = 0;
 socket.on('response', (data) => {
   console.log('response: ', data);
   if (data.highScore) {

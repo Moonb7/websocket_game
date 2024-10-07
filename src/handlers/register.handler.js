@@ -7,9 +7,12 @@ import { handleConnection, handleDisconnect, handlerEvent } from './helper.js';
 const registerHandler = (io) => {
   // 유저가 접속했을떄
   io.on('connection', (socket) => {
-    // 이벤트 처리
-    const userUUID = uuidv4();
-    // console.log(userUUID);
+    // 만약 전에 접속했던 유저라면 (로그인 기능이 있을시 또는 캐시 기능이 있다면 사용가능할듯)
+    let userUUID = '';
+    if (!socket.handshake.query.userId) userUUID = uuidv4();
+    else userUUID = socket.handshake.query.userId;
+    // console.log('----------', socket.handshake.query.userId);
+
     addUser({ uuid: userUUID, socket: socket.id }); // soket.id는 새로 연결(접속?)을 할떄마다 새롭게 등록 그리고 uuid도 임의로 만든 uuid를 넣어준다
 
     // 유저가 접속해서 등록되었으면 현재 프로젝트는 스테이지정보를 넣어 주면 되지만 실제로는 유저가 가지고 있었던 아이템이나 스킬 기타등등을 넣어 주어야 된다.
