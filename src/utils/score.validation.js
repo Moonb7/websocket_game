@@ -42,7 +42,7 @@ export const scoreValidation = (uuid, serverTime, payload) => {
   // 클라이언트 점수와 비교 하고 오차범위 5이하인지 확인
   // 게임데이터 스테이지 목표점수보다 높은지 확인
   const errorScopeResult = Math.abs(payload.score - totalScore);
-  if (errorScopeResult > errorScope && payload.score >= targetStage.score) return false;
+  if (errorScopeResult >= errorScope || payload.score < targetStage.score) return false;
   else return true;
 };
 

@@ -4,7 +4,8 @@ import handlerMappings from './handlerMapping.js';
 import { getHighestScore, getScore } from '../models/highScore.model.js';
 
 // 최고점수를 비교할 전역 변수
-let highScore = getHighestScore();
+let highScore = await getHighestScore();
+let userHighScore = await getScore();
 
 export const handleDisconnect = async (socket, uuid) => {
   console.log(socket.id);
@@ -22,11 +23,11 @@ export const handleConnection = async (io, socket, uuid) => {
   socket.emit('connection', { uuid, userScore: getScore(uuid) });
 
   // 연결할때 기록한 최고점수 클라이언트에게 주기
-  io.emit('connection', { highScore: getHighestScore() });
+  io.emit('connection', { highScore: await getHighestScore() });
 };
 
 // 클라에서 요청받은 이벤트를 실행하기 위한 함수 data에는 여러, 유저id, payload등이 있을 것이다.
-export const handlerEvent = (io, socket, data) => {
+export const handlerEvent = async (io, socket, data) => {
   // 항상 특정 Event를 실행하기전 클라이언트와의 버전이 일치하는지 체크해야 된다. 그래야 클라이언트에서 작성한 로직들이 제대로 작성할 것이다
   // 클라이언트 버전 정보를 항상 주고 일치하게 하기 위해 clientVersion는 기획단계에서 명세를 작성할때 정한다
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
@@ -43,14 +44,17 @@ export const handlerEvent = (io, socket, data) => {
   const response = handler(data.userId, data.payload); // data.userId, data.payload 기획에 따라 값을 이렇게 넣어준다
 
   // handlerId가 3이면 게임오버 이벤트이다 게임오버할떄 알려주어 갱신하기
-  if (data.handlerId === 3 && highScore < getHighestScore()) {
-    highScore = getHighestScore();
-    io.emit('response', { highScore: getHighestScore() });
+  const gethighScore = await getHighestScore();
+  if (data.handlerId === 3 && highScore < gethighScore) {
+    highScore = gethighScore;
+    io.emit('response', { highScore: gethighScore });
   }
 
-  if (data.handlerId === 3) {
-    socket.emit('response', { userScore: getScore(data.userId) });
-    console.log(data.userId);
+  // 한 유저의 최고점수가 갱신 되었으면 한명의 유저에게 갱신된 점수를 보내줍니다.
+  const getUserHighScore = await getScore();
+  if (data.handlerId === 3 && userHighScore < getUserHighScore) {
+    userHighScore = getUserHighScore;
+    socket.emit('response', { userScore: getUserHighScore });
   }
 
   // socket.emit 해당 유저 한명에게 메세지를 보낸다.

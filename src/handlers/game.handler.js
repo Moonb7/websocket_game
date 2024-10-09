@@ -24,7 +24,7 @@ export const gameStart = (uuid, payload) => {
   return { status: 'success' };
 };
 
-export const gameEnd = (uuid, payload) => {
+export const gameEnd = async (uuid, payload) => {
   // 클라이언트는 게임 종료시 서버에게 종료시점 timeStpamp와 총 점수 를 줄 것 입니다. 추가(별칭도 넘겨 받기)
   const { gameEndTime, score } = payload; // timestamp:gameEndTime 이런 형태로 쓰면 객체 구조 분해 할당으로 받고 나서 그 변수의 이름을 바꿀수 있습니다.
   const stages = getStage(uuid);
@@ -42,14 +42,16 @@ export const gameEnd = (uuid, payload) => {
   }
 
   // 최고기록 저장
-  if (score > getHighestScore()) {
-    setScore(uuid, score);
+  if (score > (await getHighestScore())) {
+    await setScore(uuid, score);
     return { status: 'success', message: 'The user achieved a new record.', score };
   }
 
+  const userHighScore = await getScore(uuid);
+  console.log('------------', userHighScore);
   // 각 유저 기록갱신시 저장
-  if (score > getScore(uuid) || !getScore(uuid)) {
-    setScore(uuid, score);
+  if (score > userHighScore || !userHighScore) {
+    await setScore(uuid, score);
     return { status: 'success', message: 'The user broke his best record.', score };
   }
 
