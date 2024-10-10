@@ -19,6 +19,7 @@ socket.on('response', (data) => {
   }
 
   if (data.userScore) {
+    console.log(data.userScore);
     userScore = data.userScore;
   }
 });
@@ -33,9 +34,9 @@ socket.on('connection', (data) => {
     highScore = data.highScore;
   }
 
-  if (data.userScore) {
-    userScore = data.userScore;
-  }
+  // if (data.userScore) {
+  //   userScore = data.userScore;
+  // }
 });
 
 // 연결한 서버에 메세지 전송 데이터 전송

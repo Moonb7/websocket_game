@@ -4,8 +4,7 @@ import handlerMappings from './handlerMapping.js';
 import { getHighestScore, getScore } from '../models/highScore.model.js';
 
 // 최고점수를 비교할 전역 변수
-let highScore = await getHighestScore();
-let userHighScore = await getScore();
+let highScore = getHighestScore();
 
 export const handleDisconnect = async (socket, uuid) => {
   console.log(socket.id);
@@ -23,7 +22,7 @@ export const handleConnection = async (io, socket, uuid) => {
   socket.emit('connection', { uuid, userScore: getScore(uuid) });
 
   // 연결할때 기록한 최고점수 클라이언트에게 주기
-  io.emit('connection', { highScore: await getHighestScore() });
+  io.emit('connection', { highScore: getHighestScore() });
 };
 
 // 클라에서 요청받은 이벤트를 실행하기 위한 함수 data에는 여러, 유저id, payload등이 있을 것이다.
@@ -44,16 +43,15 @@ export const handlerEvent = async (io, socket, data) => {
   const response = handler(data.userId, data.payload); // data.userId, data.payload 기획에 따라 값을 이렇게 넣어준다
 
   // handlerId가 3이면 게임오버 이벤트이다 게임오버할떄 알려주어 갱신하기
-  const gethighScore = await getHighestScore();
+  const gethighScore = getHighestScore();
   if (data.handlerId === 3 && highScore < gethighScore) {
     highScore = gethighScore;
     io.emit('response', { highScore: gethighScore });
   }
 
   // 한 유저의 최고점수가 갱신 되었으면 한명의 유저에게 갱신된 점수를 보내줍니다.
-  const getUserHighScore = await getScore();
-  if (data.handlerId === 3 && userHighScore < getUserHighScore) {
-    userHighScore = getUserHighScore;
+  const getUserHighScore = getScore(data.userId);
+  if (data.handlerId === 3) {
     socket.emit('response', { userScore: getUserHighScore });
   }
 

@@ -42,16 +42,16 @@ export const gameEnd = async (uuid, payload) => {
   }
 
   // 최고기록 저장
-  if (score > (await getHighestScore())) {
-    await setScore(uuid, score);
+  if (score > getHighestScore()) {
+    setScore(uuid, score);
     return { status: 'success', message: 'The user achieved a new record.', score };
   }
 
-  const userHighScore = await getScore(uuid);
+  const userHighScore = getScore(uuid);
   console.log('------------', userHighScore);
   // 각 유저 기록갱신시 저장
   if (score > userHighScore || !userHighScore) {
-    await setScore(uuid, score);
+    setScore(uuid, score);
     return { status: 'success', message: 'The user broke his best record.', score };
   }
 
